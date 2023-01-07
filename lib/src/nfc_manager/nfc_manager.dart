@@ -14,6 +14,7 @@ class NfcManager {
   NfcManager._() {
     channel.setMethodCallHandler(_handleMethodCall);
   }
+
   static NfcManager? _instance;
 
   /// A Singleton instance of NfcManager.
@@ -42,20 +43,11 @@ class NfcManager {
   /// (iOS only) `alertMessage` is used to display the message on the popup shown when the session is started.
   ///
   /// (iOS only) `onError` is called when the session is stopped for some reason after the session has started.
-  Future<void> startSession({
-    required NfcTagCallback onDiscovered,
-    Set<NfcPollingOption>? pollingOptions,
-    String? alertMessage,
-    NfcErrorCallback? onError,
-  }) async {
+  Future<void> startSession({required NfcTagCallback onDiscovered, Set<NfcPollingOption>? pollingOptions, String? alertMessage, NfcErrorCallback? onError, bool disableSound: false}) async {
     _onDiscovered = onDiscovered;
     _onError = onError;
     pollingOptions ??= NfcPollingOption.values.toSet();
-    return channel.invokeMethod('Nfc#startSession', {
-      'pollingOptions':
-          pollingOptions.map((e) => $NfcPollingOptionTable[e]).toList(),
-      'alertMessage': alertMessage,
-    });
+    return channel.invokeMethod('Nfc#startSession', {'pollingOptions': pollingOptions.map((e) => $NfcPollingOptionTable[e]).toList(), 'alertMessage': alertMessage, 'disableSound': disableSound});
   }
 
   /// Stop the session and unregister callbacks.
